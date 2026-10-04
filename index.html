@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vardiya Düzeni Hesaplama</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .container {
+            width: 350px;
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .row {
+            display: flex;
+            border-bottom: 1px solid #ccc;
+        }
+        .cell {
+            flex: 1;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .cell:first-child {
+            border-right: 1px solid #ccc;
+        }
+        .header {
+            color: red;
+            font-weight: bold;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+        .input-zone {
+            background-color: #92d050;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        select, input[type="number"], input[type="date"] {
+            background: transparent;
+            border: none;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            outline: none;
+            color: #000;
+        }
+        /* Yıl seçimi yanındaki okları taklit etmek için standart select görünümü */
+        select {
+            appearance: menuselect;
+            -webkit-appearance: menuselect;
+            -moz-appearance: menuselect;
+        }
+        .shifts-header {
+            display: flex;
+            justify-content: space-around;
+            color: red;
+            font-weight: bold;
+            font-size: 20px;
+            padding: 10px 0 5px 0;
+        }
+        .shifts-values {
+            display: flex;
+            justify-content: space-around;
+            font-size: 36px;
+            font-weight: bold;
+            padding: 5px 0 15px 0;
+        }
+        .shifts-values div {
+            flex: 1;
+        }
+        .date-section {
+            border-top: 1px solid #ccc;
+            padding: 15px 10px;
+        }
+        .date-label {
+            color: red;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .date-display-input {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Üst Başlıklar -->
+    <div class="row">
+        <div class="cell header">YIL</div>
+        <div class="cell header">LOT</div>
+    </div>
+    
+    <!-- Giriş Alanları (Yeşil Bölge) -->
+    <div class="row">
+        <div class="cell input-zone">
+            <select id="yearSelect" onchange="updateByYearOrLot()">
+                <!-- 2023 - 2030 Arası Seçim -->
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+            </select>
+        </div>
+        <div class="cell input-zone">
+            <input type="number" id="lotInput" value="1" min="1" max="365" oninput="updateByYearOrLot()">
+        </div>
+    </div>
+
+    <!-- Vardiya Harfleri -->
+    <div class="shifts-header">
+        <div>A</div>
+        <div>B</div>
+        <div>C</div>
+    </div>
+    
+    <!-- Vardiya Değerleri -->
+    <div class="shifts-values">
+        <div id="shiftA">3</div>
+        <div id="shiftB">1</div>
+        <div id="shiftC">2</div>
+    </div>
+
+    <!-- Tarih Seçim Alanı -->
+    <div class="date-section">
+        <div class="date-label">TARİH</div>
+        <input type="date" id="datePicker" class="date-display-input" onchange="updateByDatePicker()">
+    </div>
+</div>
+
+<script>
+    // Başlangıç Referansı: 01.01.2023 Pazar günüdür ve o hafta düzen: 3 1 2'dir.
+    // Döngü sırası: 
+    // 0. hafta: 3 1 2
+    // 1. hafta: 2 3 1
+    // 2. hafta: 1 2 3
+    const shiftCycles = [
+        {A: 3, B: 1, C: 2}, // Hafta 0
+        {A: 2, B: 3, C: 1}, // Hafta 1
+        {A: 1, B: 2, C: 3}  // Hafta 2
+    ];
+
+    // Sayfa ilk açıldığında çalıştır
+    window.onload = function() {
+        // İlk açılışta tarihi 01.01.2023 yap
+        document.getElementById('datePicker').value = "2023-01-01";
+        updateByDatePicker();
+    };
+
+    // Artık yıl kontrolü (Lot maksimum değerini ayarlamak için)
+    function isLeapYear(year) {
+        return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+    }
+
+    // Yıl veya LOT değiştirildiğinde tetiklenen fonksiyon
+    function updateByYearOrLot() {
+        const year = parseInt(document.getElementById('yearSelect').value);
+        let lot = parseInt(document.getElementById('lotInput').value);
+
+        // Seçilen yıla göre lot sınırını belirle (365 veya 366)
+        const maxDays = isLeapYear(year) ? 366 : 365;
+        document.getElementById('lotInput').max = maxDays;
+
+        if (isNaN(lot) || lot < 1) {
+            lot = 1;
+            document.getElementById('lotInput').value = 1;
+        } else if (lot > maxDays) {
+            lot = maxDays;
+            document.getElementById('lotInput').value = maxDays;
+        }
+
+        // Yılın ilk gününden itibaren LOT gün sonrasını hesapla
+        const startDate = new Date(year, 0, 1); // 1 Ocak
+        const targetDate = new Date(startDate.getTime() + (lot - 1) * 24 * 60 * 60 * 1000);
+
+        // Tarih seçiciyi güncelle (YYYY-MM-DD formatında)
+        const yyyy = targetDate.getFullYear();
+        const mm = String(targetDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(targetDate.getDate()).padStart(2, '0');
+        document.getElementById('datePicker').value = `${yyyy}-${mm}-${dd}`;
+
+        calculateShift(targetDate);
+    }
+
+    // Tarih kutusundan seçim yapıldığında tetiklenen fonksiyon
+    function updateByDatePicker() {
+        const dateVal = document.getElementById('datePicker').value;
+        if (!dateVal) return;
+
+        const selectedDate = new Date(dateVal);
+        const year = selectedDate.getFullYear();
+
+        // Eğer seçilen yıl 2023-2030 dışındaysa listeyi güncelleme veya sınırla
+        if (year < 2023 || year > 2030) {
+            alert("Lütfen 2023 ile 2030 arasında bir tarih seçin.");
+            return;
+        }
+
+        document.getElementById('yearSelect').value = year;
+
+        // LOT (Yılın kaçıncı günü) hesaplama
+        const startOfYear = new Date(year, 0, 1);
+        const diffInMs = selectedDate - startOfYear;
+        const lot = Math.floor(diffInMs / (1000 * 60 * 60 * 24)) + 1;
+
+        document.getElementById('lotInput').value = lot;
+        document.getElementById('lotInput').max = isLeapYear(year) ? 366 : 365;
+
+        calculateShift(selectedDate);
+    }
+
+    // Vardiya hesaplama algoritması
+    function calculateShift(date) {
+        // Temel referans noktası: 1 Ocak 2023 (Pazar günü)
+        const baseDate = new Date(2023, 0, 1);
+        
+        // Seçilen tarih ile referans tarih arasındaki gün farkını bul
+        const diffTime = date - baseDate;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+        // Eğer kullanıcı 2023 öncesine bir şekilde giderse hata vermemesi için koruma
+        if (diffDays < 0) return;
+
+        // Haftalık değişim hesabı:
+        // 01.01.2023 Pazar günü olduğu için, her pazar günü yeni bir haftaya geçilir.
+        // Pazar gününü haftanın ilk günü (indis 0) yapmak için bir ayarlama yapıyoruz.
+        // JS'de getDay(): 0=Pazar, 1=Pazartesi ...
+        
+        // Referans tarih pazar olduğu için direkt geçen toplam gün sayısını 7'ye bölerek 
+        // kaç hafta geride kaldığını tam sayı olarak bulabiliriz.
+        const weeksPassed = Math.floor(diffDays / 7);
+
+        // Döngümüz 3 haftada bir tekrar ediyor (0, 1, 2)
+        const cycleIndex = weeksPassed % 3;
+
+        // A, B, C değerlerini ekrana yazdır
+        const currentShift = shiftCycles[cycleIndex];
+        document.getElementById('shiftA').innerText = currentShift.A;
+        document.getElementById('shiftB').innerText = currentShift.B;
+        document.getElementById('shiftC').innerText = currentShift.C;
+    }
+</script>
+
+</body>
+</html>
