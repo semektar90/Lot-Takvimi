@@ -3,230 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vardiya Düzeni Hesaplama</title>
+    <title>SKT ve Vardiya Hesaplama Paneli</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
         }
         .container {
-            width: 350px;
-            background-color: #f2f2f2;
-            border: 1px solid #ccc;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .row {
-            display: flex;
-            border-bottom: 1px solid #ccc;
-        }
-        .cell {
-            flex: 1;
-            padding: 10px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 500px;
+            padding: 25px;
             box-sizing: border-box;
         }
-        .cell:first-child {
-            border-right: 1px solid #ccc;
-        }
-        .header {
-            color: red;
-            font-weight: bold;
-            font-size: 18px;
-            text-transform: uppercase;
-        }
-        .input-zone {
-            background-color: #92d050;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        select, input[type="number"], input[type="date"] {
-            background: transparent;
-            border: none;
-            font-size: 22px;
-            font-weight: bold;
+        h2 {
             text-align: center;
-            width: 100%;
-            outline: none;
-            color: #000;
+            color: #1a365d;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 24px;
         }
-        select {
-            appearance: menuselect;
-            -webkit-appearance: menuselect;
-            -moz-appearance: menuselect;
+        .card-bg {
+            background-color: #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
         }
-        .shifts-header {
+        .input-group {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .input-row {
             display: flex;
-            justify-content: space-around;
-            color: red;
-            font-weight: bold;
-            font-size: 20px;
-            padding: 10px 0 5px 0;
+            gap: 15px;
+            margin-bottom: 12px;
         }
-        .shifts-values {
-            display: flex;
-            justify-content: space-around;
-            font-size: 36px;
-            font-weight: bold;
-            padding: 5px 0 15px 0;
+        .input-row:last-child {
+            margin-bottom: 0;
         }
-        .shifts-values div {
+        .input-field {
             flex: 1;
         }
-        .date-section {
-            border-top: 1px solid #ccc;
-            padding: 15px 10px;
+        label {
+            display: block;
+            font-size: 12px;
+            color: #718096;
+            margin-bottom: 6px;
+            font-weight: 500;
         }
-        .date-label {
-            color: red;
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 5px;
-            text-transform: uppercase;
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #2d3748;
+            box-sizing: border-box;
+            background-color: white;
         }
-        .date-display-input {
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+        }
+        .section-title {
+            background-color: #3182ce;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px 6px 0 0;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .list-container {
+            border: 1px solid #e2e8f0;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: white;
+        }
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 14px;
+        }
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        .duration {
+            color: #3182ce;
+            font-weight: 600;
+        }
+        .date {
+            color: #2d3748;
+            font-weight: 600;
+        }
+        .shift-panel {
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .shift-title {
+            color: #2b6cb0;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .shift-row {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+        .shift-box {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 15px;
+            min-width: 60px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .shift-letter {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        .shift-number {
+            font-size: 20px;
+            font-weight: 800;
+            color: #3182ce;
+            margin-top: 4px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 11px;
+            color: #a0aec0;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="row">
-        <div class="cell header">YIL</div>
-        <div class="cell header">LOT</div>
-    </div>
+    <h2>SKT / Vardiya Düzeni Hesaplama</h2>
     
-    <div class="row">
-        <div class="cell input-zone">
-            <select id="yearSelect" onchange="updateByYearOrLot()">
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
-                <option value="2026">2026</option>
-                <option value="2027">2027</option>
-                <option value="2028">2028</option>
-                <option value="2029">2029</option>
-                <option value="2030">2030</option>
-            </select>
+    <div class="card-bg" id="baseDateDisplay">
+        Hesaplama Tarihi: 19 Ekim 2026
+    </div>
+
+    <div class="input-group">
+        <div class="input-row">
+            <div class="input-field" style="flex: 2;">
+                <label for="calcDate">Tarih Seçimi</label>
+                <input type="date" id="calcDate" value="2026-10-19">
+            </div>
         </div>
-        <div class="cell input-zone">
-            <!-- onfocus eklendi: Hücreye tıklanınca içi temizlenir -->
-            <input type="number" id="lotInput" value="1" min="1" max="365" oninput="updateByYearOrLot()" onfocus="this.value=''">
+        <div class="input-row">
+            <div class="input-field">
+                <label for="prodYear">Üretim Yılı</label>
+                <select id="prodYear">
+                    <option value="2025">2025</option>
+                    <option value="2026" selected>2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                </select>
+            </div>
+            <div class="input-field">
+                <label for="lotNo">Lot No</label>
+                <input type="number" id="lotNo" value="292" min="1" max="366">
+            </div>
         </div>
     </div>
 
-    <div class="shifts-header">
-        <div>A</div>
-        <div>B</div>
-        <div>C</div>
-    </div>
-    
-    <div class="shifts-values">
-        <div id="shiftA">3</div>
-        <div id="shiftB">1</div>
-        <div id="shiftC">2</div>
+    <div class="shift-panel">
+        <div class="shift-title" id="shiftPeriodTitle">Vardiya Düzeni (19.10.2026)</div>
+        <div class="shift-row">
+            <div class="shift-box">
+                <div class="shift-letter">A</div>
+                <div class="shift-number" id="shiftA">3</div>
+            </div>
+            <div class="shift-box">
+                <div class="shift-letter">B</div>
+                <div class="shift-number" id="shiftB">1</div>
+            </div>
+            <div class="shift-box">
+                <div class="shift-letter">C</div>
+                <div class="shift-number" id="shiftC">2</div>
+            </div>
+        </div>
     </div>
 
-    <div class="date-section">
-        <div class="date-label">TARİH</div>
-        <input type="date" id="datePicker" class="date-display-input" onchange="updateByDatePicker()">
+    <div>
+        <div class="section-title">
+            <span>Süre (Gün)</span>
+            <span>Son Kullanma Tarihi</span>
+        </div>
+        <div class="list-container" id="sktList">
+            <!-- Dinamik yüklenecek -->
+        </div>
+    </div>
+
+    <div class="footer">
+        Designed by Serhat Emektar
     </div>
 </div>
 
 <script>
-    const shiftCycles = [
-        {A: 3, B: 1, C: 2}, 
-        {A: 2, B: 3, C: 1}, 
-        {A: 1, B: 2, C: 3}  
-    ];
+    const calcDateInput = document.getElementById('calcDate');
+    const prodYearSelect = document.getElementById('prodYear');
+    const lotNoInput = document.getElementById('lotNo');
+    const baseDateDisplay = document.getElementById('baseDateDisplay');
+    const shiftPeriodTitle = document.getElementById('shiftPeriodTitle');
+    
+    const shiftA = document.getElementById('shiftA');
+    const shiftB = document.getElementById('shiftB');
+    const shiftC = document.getElementById('shiftC');
+    const sktList = document.getElementById('sktList');
 
-    window.onload = function() {
-        document.getElementById('datePicker').value = "2023-01-01";
-        updateByDatePicker();
-    };
+    const intervals = [60, 90, 120, 150, 180, 210, 240, 270, 300, 365, 540, 730];
+    const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
-    function isLeapYear(year) {
-        return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+    // İlk referans başlangıcı: 04.01.2026 (Pazar)
+    // Hafta 0 (mod 3 == 0): A:2, B:3, C:1
+    // Hafta 1 (mod 3 == 1): A:1, B:2, C:3
+    // Hafta 2 (mod 3 == 2): A:3, B:1, C:2
+    const refDate = new Date(2026, 0, 4); 
+
+    function getDayOfYear(date) {
+        const start = new Date(date.getFullYear(), 0, 0);
+        const diff = date - start;
+        const oneDay = 1000 * 60 * 60 * 24;
+        return Math.floor(diff / oneDay);
     }
 
-    function updateByYearOrLot() {
-        // Hücre boşsa (kullanıcı silme yaparken veya yeni yazıyorken) fonksiyonu durdur
-        if (document.getElementById('lotInput').value === "") {
-            return; 
+    function formatDate(date) {
+        const d = String(date.getDate()).padStart(2, '0');
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const y = date.getFullYear();
+        return `${d}.${m}.${y}`;
+    }
+
+    function formatLongDate(date) {
+        return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+    }
+
+    function updateCalculations(source) {
+        let currentTargetDate;
+
+        if (source === 'date') {
+            currentTargetDate = new Date(calcDateInput.value);
+            if (isNaN(currentTargetDate.getTime())) return;
+            
+            prodYearSelect.value = currentTargetDate.getFullYear();
+            lotNoInput.value = getDayOfYear(currentTargetDate);
+        } else {
+            const year = parseInt(prodYearSelect.value);
+            const lot = parseInt(lotNoInput.value) || 1;            
+            currentTargetDate = new Date(year, 0, 1);
+            currentTargetDate.setDate(lot);
+            
+            // Tarih girdisini güncelle yyyy-mm-dd formatında
+            const y = currentTargetDate.getFullYear();
+            const m = String(currentTargetDate.getMonth() + 1).padStart(2, '0');
+            const d = String(currentTargetDate.getDate()).padStart(2, '0');
+            calcDateInput.value = `${y}-${m}-${d}`;
         }
 
-        const year = parseInt(document.getElementById('yearSelect').value);
-        let lot = parseInt(document.getElementById('lotInput').value);
+        // 1. Üst Başlık Yazısı
+        baseDateDisplay.innerText = `Hesaplama Tarihi: ${formatLongDate(currentTargetDate)}`;
+        shiftPeriodTitle.innerText = `Vardiya Düzeni (${formatDate(currentTargetDate)})`;
 
-        const maxDays = isLeapYear(year) ? 366 : 365;
-        document.getElementById('lotInput').max = maxDays;
+        // 2. Vardiya Hesabı
+        // İki tarih arasındaki gün farkını pazar gününe hizalayarak haftalık buluyoruz.
+        // JS zaman farkı (ms cinsinden) yerel saat farkından etkilenmemesi için UTC veya düz gün hesabı yapalım:
+        const timeDiff = currentTargetDate.getTime() - refDate.getTime();
+        let dayDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        
+        // Haftalık başlangıç gününe (Pazar) yuvarlayarak tam hafta farkını bulma
+        // Eğer gün farkı negatifse tabana doğru yuvarlamak için Math.floor kullanıyoruz
+        let weekDiff = Math.floor(dayDiff / 7);
+        let shiftMod = ((weekDiff % 3) + 3) % 3;
 
-        if (isNaN(lot) || lot < 1) {
-            lot = 1;
-            document.getElementById('lotInput').value = 1;
-        } else if (lot > maxDays) {
-            lot = maxDays;
-            document.getElementById('lotInput').value = maxDays;
+        if (shiftMod === 0) {
+            shiftA.innerText = "2"; shiftB.innerText = "3"; shiftC.innerText = "1";
+        } else if (shiftMod === 1) {
+            shiftA.innerText = "1"; shiftB.innerText = "2"; shiftC.innerText = "3";
+        } else {
+            shiftA.innerText = "3"; shiftB.innerText = "1"; shiftC.innerText = "2";
         }
 
-        const startDate = new Date(year, 0, 1); 
-        const targetDate = new Date(startDate.getTime() + (lot - 1) * 24 * 60 * 60 * 1000);
-
-        const yyyy = targetDate.getFullYear();
-        const mm = String(targetDate.getMonth() + 1).padStart(2, '0');
-        const dd = String(targetDate.getDate()).padStart(2, '0');
-        document.getElementById('datePicker').value = `${yyyy}-${mm}-${dd}`;
-
-        calculateShift(targetDate);
+        // 3. SKT Listesi Oluşturma
+        sktList.innerHTML = '';
+        intervals.forEach(days => {
+            let resDate = new Date(currentTargetDate.getTime());
+            resDate.setDate(resDate.getDate() + days);
+            
+            const item = document.createElement('div');
+            item.className = 'list-item';
+            item.innerHTML = `
+                <span class="duration">${days} Gün</span>
+                <span class="date">${formatDate(resDate)}</span>
+            `;
+            sktList.appendChild(item);
+        });
     }
 
-    function updateByDatePicker() {
-        const dateVal = document.getElementById('datePicker').value;
-        if (!dateVal) return;
+    // Event Listeners
+    calcDateInput.addEventListener('input', () => updateCalculations('date'));
+    prodYearSelect.addEventListener('change', () => updateCalculations('inputs'));
+    lotNoInput.addEventListener('input', () => updateCalculations('inputs'));
 
-        const selectedDate = new Date(dateVal);
-        const year = selectedDate.getFullYear();
-
-        if (year < 2023 || year > 2030) {
-            alert("Lütfen 2023 ile 2030 arasında bir tarih seçin.");
-            return;
-        }
-
-        document.getElementById('yearSelect').value = year;
-
-        const startOfYear = new Date(year, 0, 1);
-        const diffInMs = selectedDate - startOfYear;
-        const lot = Math.floor(diffInMs / (1000 * 60 * 60 * 24)) + 1;
-
-        document.getElementById('lotInput').value = lot;
-        document.getElementById('lotInput').max = isLeapYear(year) ? 366 : 365;
-
-        calculateShift(selectedDate);
-    }
-
-    function calculateShift(date) {
-        const baseDate = new Date(2023, 0, 1);
-        const diffTime = date - baseDate;
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays < 0) return;
-
-        const weeksPassed = Math.floor(diffDays / 7);
-        const cycleIndex = weeksPassed % 3;
-
-        const currentShift = shiftCycles[cycleIndex];
-        document.getElementById('shiftA').innerText = currentShift.A;
-        document.getElementById('shiftB').innerText = currentShift.B;
-        document.getElementById('shiftC').innerText = currentShift.C;
-    }
+    // İlk açılışta tetikle
+    updateCalculations('date');
 </script>
 
 </body>
